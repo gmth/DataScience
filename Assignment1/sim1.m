@@ -9,7 +9,6 @@
 %    t = 0:0.2:ceil(max(x)), y_fit = polyval(polyfit(x, y_sim, m), t)
 
 clear
-clc
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generate k points for an actual function %
