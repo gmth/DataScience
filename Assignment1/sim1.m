@@ -8,6 +8,7 @@
 % 4) estimate with m-polynomial using [a_m, a_m-1 ... a0 ] = polyfit(x, y_sim, m),
 %    t = 0:0.2:ceil(max(x)), y_fit = polyval(polyfit(x, y_sim, m), t)
 
+clc
 clear
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,10 +21,10 @@ datasets = [10 100 1000];
 
 for k = 1:length(datasets)
 
-    x = linspace(0, 10, datasets(k))';
+    x = linspace(1, 10, datasets(k))';
 
     % Choose a function y = 2 + 0.5x %
-    y_act = 2 + 0.5*x;
+    y_act = 2 + 0.5*x + 0.02*(x.^2)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generate n datasets y_samp, sigma = 1 %
