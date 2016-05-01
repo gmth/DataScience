@@ -3,7 +3,7 @@
 % 2) take n random x locations, calculate their corresponding y, store in 
 %    y_act
 % 
-% 3) generate y_sim
+% 3) generate y_samp
 % 
 % 4) estimate with m-polynomial using [a_m, a_m-1 ... a0 ] = polyfit(x, y_sim, m),
 %    t = 0:0.2:ceil(max(x)), y_fit = polyval(polyfit(x, y_sim, m), t)
@@ -18,30 +18,22 @@ sigma = 1;
 
 samples = [10 100 1000 10000];
 
-colors = ['y' 'm' 'c' 'r' 'g' 'b'];
+colors = ['y' 'm' 'c' 'r' 'k' 'b'];
 
 figure
 
 for k = 1:length(samples)
 
     x = linspace(0.01, 0.99, samples(k))';
-    %x = linspace(0, 10, samples(k))';
 
     % Choose a function ln(1/x) (log in matlab returns ln)
     % Choose because of taylor series -> higher polynomial should do better
     y_act = log(x.^-1);
-
-    % OR
-    % Choose a polynomial function
-    % Choose to see whether there is a stagnation in performance for higher
-    % order polynomials. Remember to change the linspace for x, and the limit
-    % on the x-axis on the plot
-    %y_act = 3 + 2*x + 0.4*x.^2 - x.^3;
-
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Generate n datasets y_samp, sigma = 1 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+    
     y_samp = normrnd(repmat(y_act, 1, n), sigma);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,12 +50,13 @@ for k = 1:length(samples)
     subplot(2,2,k);
     xlim([0 1]);
     hold on;
+    grid on;
 
-    plot(x, y_act, 'k');
+    plot(x, y_act, 'g.-');
     for i = 1:length(A)
         
-        % matlab returns a least squares solution here, since the matrix dimensions
-        % will not match
+        % matlab returns a least squares solution here, 
+        % since the matrix dimensions will not match
         beta = A{i}\y_samp;
         y_hat = A{i} * beta;
 
@@ -79,16 +72,16 @@ for k = 1:length(samples)
         mse(i, k) = bias_squared(i, k) + variance(i, k);
         mse2(i,k) = mean(mean((repmat(y_act, 1, n) - y_hat).^2));
 
-        % plot one / the mean (comment out!) y_hat
+        % plot y_hat
         plot(x, y_hat(:,1), colors(i));
-        %plot(x, mean(y_hat, 2), colors(i))
         title([num2str(samples(k)) ' samples']);
         xlabel('x');
         ylabel('y');
     end
+    legend('ln(1/x)', '1st order', '2nd order', '3rd order', '4th order', '5th order', '6th order');
 end
 
-bias_squared
-variance
-mse
-mse2
+bias_squared;
+variance;
+mse;
+mse2;
