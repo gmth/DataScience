@@ -81,6 +81,7 @@ for k = 1:length(samples)
 
         % plot one / the mean (comment out!) y_hat
         plot(x, y_hat(:,1), colors(i));
+        %plot(x, mean(y_hat, 2), colors(i))
         title([num2str(samples(k)) ' samples']);
         xlabel('x');
         ylabel('y');
