@@ -2,8 +2,10 @@ clc
 clear
 close all
 
-p = 1:32;
+%p = 1:32;
+p = [ 1 2 4 8 16 32 ];
 predictions = zeros(1,length(p));
+actuals = ones(1, length(p));
 
 a = 3;
 x_test = 0;
@@ -12,7 +14,7 @@ nSamples = 1000;
 numtests = 20;
 coeffs = zeros(numtests, 2);
 
-for j = 1:numtests
+%for j = 1:numtests
     
     for i = 1:length(p)
         
@@ -24,14 +26,15 @@ for j = 1:numtests
         predictions(i) = exp(-a * x_closest);
 
     end
+    
+    figure
+    plot(p, predictions, 'LineWidth', 4);
+    xlabel('number of dimensions');
+    ylabel('edge length estimate');
 
-%    plot(p, predictions);
-
-    f = fit(p', predictions', 'exp1');
-    coeffs(j,:) = coeffvalues(f);
-
-%    plot(f, p, predictions);
-end
+%    f = fit(p', predictions', 'exp1');
+%    coeffs(j,:) = coeffvalues(f);
+%end
 
 coeffs
 

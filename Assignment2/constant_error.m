@@ -13,7 +13,7 @@ x_test = 0;
 % but the results are fairly constant. Only in the beginning the estimation
 % is 'too good'
 for i = 1:length(p)
-    nSamples = ceil( 1.4* exp(p(i) * 0.3));
+    nSamples = round(a * exp(p(i)));
     
     x_samples     = unifrnd(0, 1, [nSamples, p(i)]);
     x_samples_mag = sqrt(sum(x_samples.*x_samples, 2)); 
