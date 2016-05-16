@@ -1,3 +1,6 @@
+clc
+clear
+close all
 
 p = [ 1 2 4 8 16 32 ];
 predictions = zeros(1,length(p));
