@@ -2,7 +2,7 @@ clc
 clear
 close all
 
-p = [ 1 2 4 8 16 32 ];
+p = 1:32;
 predictions = zeros(1,length(p));
 
 a = 3;
@@ -10,7 +10,6 @@ x_test = 0;
 nSamples = 1000;
 
 for i = 1:length(p)
-
     
     x_samples     = unifrnd(0, 1, [nSamples, p(i)]);
     x_samples_mag = sqrt(sum(x_samples.*x_samples, 2)); 
@@ -24,5 +23,6 @@ end
 figure
 plot(p, predictions);
 
+f = fit(p', predictions', 'exp1');
 
-
+plot(f, p, predictions);
