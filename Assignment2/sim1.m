@@ -13,8 +13,7 @@ numtests = 20;
 coeffs = zeros(numtests, 2);
 
 for j = 1:numtests
-
-
+    
     for i = 1:length(p)
         
         x_samples     = unifrnd(0, 1, [nSamples, p(i)]);
