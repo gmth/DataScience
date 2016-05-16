@@ -14,7 +14,7 @@ nSamples = 1000;
 numtests = 20;
 coeffs = zeros(numtests, 2);
 
-%for j = 1:numtests
+for j = 1:numtests
     
     for i = 1:length(p)
         
@@ -27,14 +27,18 @@ coeffs = zeros(numtests, 2);
 
     end
     
-    figure
-    plot(p, predictions, 'LineWidth', 4);
-    xlabel('number of dimensions');
-    ylabel('edge length estimate');
+    % figure
+    % plot(p, predictions, 'LineWidth', 4);
+    % xlabel('number of dimensions');
+    % ylabel('edge length estimate');
 
-%    f = fit(p', predictions', 'exp1');
-%    coeffs(j,:) = coeffvalues(f);
-%end
+    f = fit(p', predictions', 'exp1');
+    % fitplot = plot(f, 'k-', p, predictions, 'r-');
+    % xlabel('number of dimensions');
+    % ylabel('edge length estimate');
+    % set(fitplot, 'LineWidth', 4);
+    coeffs(j,:) = coeffvalues(f);
+end
 
 coeffs
 
