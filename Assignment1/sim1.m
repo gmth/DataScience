@@ -26,7 +26,7 @@ for k = 1:length(samples)
     
     % Generate an x array for the training and x_ext (x_extended) to see
     % how the estimate will perform outside the training boundaries
-    x = linspace(0.01, 0.99, samples(k))';
+    x = linspace(0.01, 0.90, samples(k))';
     x_ext = linspace(0.01, 1.99, 2*samples(k))';
 
     % Choose a function ln(1/x) (log in matlab returns ln)
@@ -72,7 +72,7 @@ for k = 1:length(samples)
         beta = A{i} \ y_samp;
         y_hat = A{i} * beta;
         y_est = B{i} * beta;
-
+        
         % bias and variance taken from page 50 of the book. Because we have
         % n datasets instead of one, I added an extra 'mean' around the 
         % definition: E_total = mean(E_T_i) forall i = 1:n
