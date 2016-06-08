@@ -13,7 +13,7 @@ x_test = 0;
 % but the results are fairly constant. Only in the beginning the estimation
 % is 'too good'
 for i = 1:length(p)
-    nSamples = round(a * exp(p(i)));
+    nSamples = ceil(a * exp(p(i)));
     
     x_samples     = unifrnd(0, 1, [nSamples, p(i)]);
     x_samples_mag = sqrt(sum(x_samples.*x_samples, 2)); 
@@ -24,5 +24,6 @@ for i = 1:length(p)
 
 end
 
-plot(p, predictions);
-
+plot(p, 1-predictions);
+xlabel('Number of dimensions');
+ylabel('err_p')
