@@ -10,7 +10,8 @@ lua.LuaRuntime(zero_based_index=True)
 
 # parameters and flags
 TRAININGSIZE = 60 # parameter that indicates the number of set to be used for training the SVM
-BINARY = False # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
+BINARY = True # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
+USE_WEIGHTS = False # Flag to indicate if the SVM should use non-uniform class_weights
 
 
 ######################	DATA LOADING ####################
@@ -44,10 +45,12 @@ print("...loaded data.")
 print(str(len(featuresDict)) + " image sets loaded. " + str(len(imagesList)) + " images in total.\n")
 
 ######################	SPLITTING DATASETS, TRAINING AND PREDICTION 	####################
-prediction_errors = []
+individual_prediction_scores = []
 # k-fold cross-validation
 for k in range(0, 10):
 	print("k = " + str(k))
+
+	######################	SPLITTING DATASETS	####################
 	print("Splitting data in trainingdata and testdata...")
 	trainingsets = []
 	trainingdata = []
@@ -87,42 +90,32 @@ for k in range(0, 10):
 					else:
 						testclasses.append(i - j)
 						testclasses.append(j - i)
-
 	print("...Split data into a trainingset with " + str(len(trainingclasses)) + " samples and a testset with " + str(len(testclasses)) + " samples.\n")
 
-
+	######################	TRAINING	####################
 	print("Training SVM...")
-	clf = svm.LinearSVC(class_weight = {-4: 4, -3:3, -2:2, -1:1, 1:1, 2:2, 3:3, 4:4})
+	if (not BINARY) and USE_WEIGHTS:
+		clf = svm.LinearSVC(class_weight = {-4: 4, -3: 3, -2: 2, -1: 1, 1: 1, 2: 2, 3: 3, 4: 4})
+	else:
+		clf = svm.LinearSVC()
+
 	clf.fit(trainingdata, trainingclasses)
 	print("...Training done!\n")
 
+	######################	CLASSIFICATION 	####################
 	print("Classifying testset...")
 	prediction = clf.predict(testdata)
-
-	correct_counter = 0
-	false_counter = 0
-	exactly_correct_counter = 0
-	for i in range(0, len(testclasses)):
-		if ((testclasses[i] < 0) and (prediction[i] < 0)) or ((testclasses[i] > 0) and (prediction[i] > 0)):
-			correct_counter += 1
-			if (testclasses[i] == prediction[i]):
-				exactly_correct_counter += 1
-		else:
-			false_counter += 1
 
 	print("...Classification done!\n")
 
 	orders = binEval.find_orders(prediction)
+	individual_prediction_scores.append(clf.score(testdata, testclasses))
+	print("prediction score: " + str(individual_prediction_scores[k]) + "\n----------------------------------------------\n")
 
-	# print("correct: " + str(correct_counter))
-	# print("exactly correct: " + str(exactly_correct_counter))
-	# print("wrong: " + str(false_counter))
-	prediction_errors.append(float(false_counter)/float(len(testclasses)))
-	print("prediction error: " + str(prediction_errors[k]) + "\n------------------------------\n")
 
 ######################	RESULTS OVERVIEW 	####################
-print("prediction_errors: " + str(prediction_errors))
-average_prediction_error = scipy.mean(prediction_errors)#sum(prediction_errors) / len(prediction_errors)
-prediction_error_variance = scipy.var(prediction_errors)
-print("average prediction error: " + str(average_prediction_error))
-print("prediction variance: " + str(prediction_error_variance) + "\n")
+print("prediction scores: " + str(individual_prediction_scores))
+average_prediction_score = scipy.mean(individual_prediction_scores)
+prediction_score_variance = scipy.var(individual_prediction_scores)
+print("average prediction score: " + str(average_prediction_score * 100) + "%")
+print("prediction score variance: " + str(prediction_score_variance) + "\n")
