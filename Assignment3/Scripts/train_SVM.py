@@ -3,13 +3,14 @@
 from sklearn import svm
 import random
 import scipy
+import getOrderFromBinaryClass as binEval
 import lutorpy as lua
 # setup runtime and use zero-based index(optional, enabled by default)
 lua.LuaRuntime(zero_based_index=True)
 
 # parameters and flags
 TRAININGSIZE = 60 # parameter that indicates the number of set to be used for training the SVM
-BINARY = True # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
+BINARY = False # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
 
 
 ######################	DATA LOADING ####################
@@ -45,7 +46,7 @@ print(str(len(featuresDict)) + " image sets loaded. " + str(len(imagesList)) + "
 ######################	SPLITTING DATASETS, TRAINING AND PREDICTION 	####################
 prediction_errors = []
 # k-fold cross-validation
-for k in range(0, 1):
+for k in range(0, 10):
 	print("k = " + str(k))
 	print("Splitting data in trainingdata and testdata...")
 	trainingsets = []
@@ -91,7 +92,7 @@ for k in range(0, 1):
 
 
 	print("Training SVM...")
-	clf = svm.LinearSVC()
+	clf = svm.LinearSVC(class_weight = {-4: 4, -3:3, -2:2, -1:1, 1:1, 2:2, 3:3, 4:4})
 	clf.fit(trainingdata, trainingclasses)
 	print("...Training done!\n")
 
@@ -110,6 +111,8 @@ for k in range(0, 1):
 			false_counter += 1
 
 	print("...Classification done!\n")
+
+	orders = binEval.find_orders(prediction)
 
 	# print("correct: " + str(correct_counter))
 	# print("exactly correct: " + str(exactly_correct_counter))

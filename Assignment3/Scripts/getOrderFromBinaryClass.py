@@ -44,6 +44,18 @@ def get_order(inputarray):
     print(currentscore)
     print(currentorder)
 
+def evaluate(classification_result):
+    step = 20
+    i = 0;
+    while((i+1)*step <= len(classification_result)):
+        start = i*step;
+        stop = (i+1)*step;
+        print(classification_result[start:stop])
+        get_order(classification_result[start:stop]); 
+        i += 1
+        print("-------------------")
+
+
 if __name__ == "__main__":
     inp_arr = [     -1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1, -1,
                 1, -1, 1, -1, 1, -1, 1, -1, 1, 1, -1, 1, -1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1,
