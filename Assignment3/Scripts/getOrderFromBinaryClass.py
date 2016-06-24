@@ -41,7 +41,7 @@ def get_mult_score(inp, compare_to):
 
     score = 0;
     for i in range(len(inp)):
-        score += 8 - abs(inp[i] - compare_to[i])
+        score += - abs(inp[i] - compare_to[i])
     return score
 
 def is_binary(arr):
@@ -52,7 +52,7 @@ def get_order(inputarray):
         print("Invalid input array: ", inputarray)
         raise ValueError("Invalid input array")
 
-    currentscore = 0
+    currentscore = -100000
     currentorder = 0
     perms = list(itertools.permutations([1,2,3,4,5]))
     shuffle(perms)      # shuffle to take out a bias for orders higher up in the
@@ -88,8 +88,6 @@ def find_orders(classification_result):
 
         score = evaluate(order)
         scores.append(score)
-        with open('logs/testresults.log', 'a') as f:
-            f.write(" ".join(map(str, order)) + ", " + str(score) + "\n")
         print("Order: ", order)
         print("Score: ", score)
         print("-------------------")

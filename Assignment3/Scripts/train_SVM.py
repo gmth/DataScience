@@ -56,7 +56,7 @@ print(str(len(featuresDict)) + " image sets loaded. " + str(len(imagesList)) + "
 individual_prediction_scores = []
 overall_scores = []
 # k-fold cross-validation
-for k in range(0, 1):
+for k in range(0, 100):
 	print("k = " + str(k))
 
 	######################	SPLITTING DATASETS	####################
@@ -89,8 +89,6 @@ for k in range(0, 1):
 						trainingclasses.append(j - i)
 			counter += 1
 		else:
-                        with open('logs/testsets.log', 'a') as f:
-                            f.write(str(key)+"\n")
 			for i in range(0,4):
 				for j in range(i+1, 5):
 					testdata.append(featuresDict[key][i] - featuresDict[key][j])
