@@ -56,7 +56,7 @@ print(str(len(featuresDict)) + " image sets loaded. " + str(len(imagesList)) + "
 individual_prediction_scores = []
 overall_scores = []
 # k-fold cross-validation
-for k in range(0, 10):
+for k in range(0, 1):
 	print("k = " + str(k))
 
 	######################	SPLITTING DATASETS	####################
@@ -89,6 +89,7 @@ for k in range(0, 10):
 						trainingclasses.append(j - i)
 			counter += 1
 		else:
+			print key
 			for i in range(0,4):
 				for j in range(i+1, 5):
 					testdata.append(featuresDict[key][i] - featuresDict[key][j])
@@ -116,7 +117,7 @@ for k in range(0, 10):
 	prediction = clf.predict(testdata)
 
 	confidence_scores = clf.decision_function(testdata)
-	# print("Decision function: ", confidence_scores)
+	print("Decision function: ", confidence_scores)
 
 	print("...Classification done!\n")
 

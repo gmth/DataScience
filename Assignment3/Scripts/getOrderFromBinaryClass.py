@@ -41,7 +41,7 @@ def get_mult_score(inp, compare_to):
 
     score = 0;
     for i in range(len(inp)):
-        score += 10 - abs(inp[i] - compare_to[i])
+        score += 8 - abs(inp[i] - compare_to[i])
     return score
 
 def is_binary(arr):
@@ -104,7 +104,6 @@ def evaluate(order):
         sum_d_squared += (i+1 - order[i])**2
     rho = 1 - (float(6*sum_d_squared) / float(5*(25-1)))
     return rho
-
 
 if __name__ == "__main__":
     inp_arr = [     -1, 1, -1, 1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, -1, 1, -1, 1, -1,
