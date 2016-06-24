@@ -88,9 +88,11 @@ def find_orders(classification_result):
 
         score = evaluate(order)
         scores.append(score)
-        # print("Order: ", order)
-        # print("Score: ", score)
-        # print("-------------------")
+        with open('logs/testresults.log', 'a') as f:
+            f.write(" ".join(map(str, order)) + ", " + str(score) + "\n")
+        print("Order: ", order)
+        print("Score: ", score)
+        print("-------------------")
     return scipy.mean(scores)
 
 def evaluate(order):

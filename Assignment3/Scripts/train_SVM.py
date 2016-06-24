@@ -13,7 +13,7 @@ lua.LuaRuntime(zero_based_index=True)
 
 # parameters and flags
 TRAININGSIZE = 60 # parameter that indicates the number of set to be used for training the SVM
-BINARY = False # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
+BINARY = True # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
 USE_WEIGHTS = False # Flag to indicate if the SVM should use non-uniform class_weights
 
 
@@ -89,7 +89,8 @@ for k in range(0, 1):
 						trainingclasses.append(j - i)
 			counter += 1
 		else:
-			print key
+                        with open('logs/testsets.log', 'a') as f:
+                            f.write(str(key)+"\n")
 			for i in range(0,4):
 				for j in range(i+1, 5):
 					testdata.append(featuresDict[key][i] - featuresDict[key][j])
@@ -117,7 +118,7 @@ for k in range(0, 1):
 	prediction = clf.predict(testdata)
 
 	confidence_scores = clf.decision_function(testdata)
-	print("Decision function: ", confidence_scores)
+	#print("Decision function: ", confidence_scores)
 
 	print("...Classification done!\n")
 
