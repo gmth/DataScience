@@ -4,14 +4,18 @@ from sklearn import svm
 import random
 import scipy
 import getOrderFromBinaryClass as binEval
+import numpy as np
+from matplotlib import pyplot as plt
+
 import lutorpy as lua
 # setup runtime and use zero-based index(optional, enabled by default)
 lua.LuaRuntime(zero_based_index=True)
 
 # parameters and flags
 TRAININGSIZE = 60 # parameter that indicates the number of set to be used for training the SVM
-BINARY = True # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
+BINARY = False # Flag to indicate if we should use a binary scheme (-1, +1) or 8-class scheme (-4, -3, -2, -1, +1, +2, +3, +4)
 USE_WEIGHTS = False # Flag to indicate if the SVM should use non-uniform class_weights
+
 
 
 ######################	DATA LOADING ####################
@@ -44,8 +48,13 @@ for i in range(0, len(imagesList)):
 print("...loaded data.")
 print(str(len(featuresDict)) + " image sets loaded. " + str(len(imagesList)) + " images in total.\n")
 
+# C_individual_performance = []
+# C_ranking_performance = []
+# C = np.arange(0.5, 5.5, 0.5)
+# for c in C:
 ######################	SPLITTING DATASETS, TRAINING AND PREDICTION 	####################
 individual_prediction_scores = []
+overall_scores = []
 # k-fold cross-validation
 for k in range(0, 10):
 	print("k = " + str(k))
@@ -97,7 +106,7 @@ for k in range(0, 10):
 	if (not BINARY) and USE_WEIGHTS:
 		clf = svm.LinearSVC(class_weight = {-4: 4, -3: 3, -2: 2, -1: 1, 1: 1, 2: 2, 3: 3, 4: 4})
 	else:
-		clf = svm.LinearSVC()
+		clf = svm.LinearSVC(loss = 'squared_hinge')
 
 	clf.fit(trainingdata, trainingclasses)
 	print("...Training done!\n")
@@ -106,16 +115,38 @@ for k in range(0, 10):
 	print("Classifying testset...")
 	prediction = clf.predict(testdata)
 
+	confidence_scores = clf.decision_function(testdata)
+	# print("Decision function: ", confidence_scores)
+
 	print("...Classification done!\n")
 
-	orders = binEval.find_orders(prediction)
+	overall_scores.append(binEval.find_orders(prediction))
 	individual_prediction_scores.append(clf.score(testdata, testclasses))
-	print("prediction score: " + str(individual_prediction_scores[k]) + "\n----------------------------------------------\n")
 
+	# C_individual_performance.append(scipy.mean(individual_prediction_scores))
+	# C_ranking_performance.append(scipy.mean(overall_scores))
 
 ######################	RESULTS OVERVIEW 	####################
 print("prediction scores: " + str(individual_prediction_scores))
 average_prediction_score = scipy.mean(individual_prediction_scores)
 prediction_score_variance = scipy.var(individual_prediction_scores)
-print("average prediction score: " + str(average_prediction_score * 100) + "%")
+
+print("average individual prediction score: " + str(average_prediction_score * 100) + "%")
 print("prediction score variance: " + str(prediction_score_variance) + "\n")
+
+print("overall_scores: " + str(overall_scores))
+print("Average overall score: " + str(scipy.mean(overall_scores)) + "\n")
+print("----------------------------------------------\n")
+
+# plt.figure(1)
+# plt.subplot(211)
+# plt.plot(C, C_individual_performance)
+# plt.xlabel('C')
+# plt.ylabel('indidual classification performance')
+
+# plt.subplot(212)
+# plt.plot(C, C_ranking_performance)
+# plt.xlabel('C')
+# plt.ylabel('ranking performance')
+
+# plt.savefig('C_results.png')

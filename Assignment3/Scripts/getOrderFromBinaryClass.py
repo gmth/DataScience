@@ -1,21 +1,31 @@
 import numpy as np
 import itertools
+import scipy
 from random import shuffle
 
-def create_expected_array(lst):
+def create_expected_bin_array(lst):
     if len(lst) != 5:
         raise ValueError("wrong list input")
 
     arr = []
-
     for i in range(0,4):
         for j in range(i+1,5):
             arr.append(np.sign(lst[i]-lst[j]))
             arr.append(np.sign(lst[j]-lst[i]))    
     return arr
 
-def get_score(inp, compare_to):
-    
+def create_expected_mult_array(lst):
+    if len(lst) != 5:
+        raise ValueError("wrong list input")
+
+    arr = []
+    for i in range(0,4):
+        for j in range(i+1,5):
+            arr.append(lst[i]-lst[j])
+            arr.append(lst[j]-lst[i])    
+    return arr
+
+def get_bin_score(inp, compare_to):    
     if len(inp) != len(compare_to):
         raise ValueError("unequal list lengths")
 
@@ -25,56 +35,75 @@ def get_score(inp, compare_to):
             score += 1;
     return score
 
+def get_mult_score(inp, compare_to):    
+    if len(inp) != len(compare_to):
+        raise ValueError("unequal list lengths")
 
-def has_distances(arr):
-    return any([(b!=1 and b!=-1) for b in arr])
+    score = 0;
+    for i in range(len(inp)):
+        score += 10 - abs(inp[i] - compare_to[i])
+    return score
+
+def is_binary(arr):
+    return all([(b==1 or b==-1) for b in arr])
 
 def get_order(inputarray):
     if len(inputarray) != 20:
         print("Invalid input array: ", inputarray)
         raise ValueError("Invalid input array")
-    
-    if(has_distances(inputarray)):
-        print("has distances")
-        raise ValueError("Distances have not yet been implemented in find_orders")
 
-    currentscore = 0;
+    currentscore = 0
     currentorder = 0
     perms = list(itertools.permutations([1,2,3,4,5]))
     shuffle(perms)      # shuffle to take out a bias for orders higher up in the
                         # perms list (for similar scores, the first one that
                         # is encountered is taken)
-    for order in perms:
-        score = get_score(inputarray, create_expected_array(order))
-        if score > currentscore:
-            currentscore = score
-            currentorder = order
+
+    # binary case
+    if(is_binary(inputarray)):
+        for order in perms:
+            score = get_bin_score(inputarray, create_expected_bin_array(order))
+            if score > currentscore:
+                currentscore = score
+                currentorder = order
+    # multi-class case
+    else:
+        for order in perms:
+            score = get_mult_score(inputarray, create_expected_mult_array(order))
+            if score > currentscore:
+                currentscore = score
+                currentorder = order
+        # raise ValueError("Multiple classes have not yet been implemented in find_orders")
     return currentorder
 
 def find_orders(classification_result):
     step = 20
     i = 0;
+    scores = []
     while((i+1)*step <= len(classification_result)):
         start = i*step;
         stop = (i+1)*step;
         order = get_order(classification_result[start:stop]); 
         i += 1
-        print("Order: ", order)
-        print("Score: ", evaluate(order))
-        print("-------------------")
 
+        score = evaluate(order)
+        scores.append(score)
+        # print("Order: ", order)
+        # print("Score: ", score)
+        # print("-------------------")
+    return scipy.mean(scores)
 
 def evaluate(order):
     if len(order) != 5:
         print("Invalid order: ", order)
         raise ValueError("invalid order length")
 
-    # Correct order: (1,2,3,4,5) -> on location i should be number i+1; 
-    # Thus, the penalty is equal to abs(i+1 - order[i])
-    penalty = 0;
+    # calculate spearman's coefficient
+    sum_d_squared = 0;
     for i in range(5):
-        penalty += abs(i+1 - order[i])
-    return penalty
+        sum_d_squared += (i+1 - order[i])**2
+    rho = 1 - (float(6*sum_d_squared) / float(5*(25-1)))
+    return rho
 
 
 if __name__ == "__main__":
